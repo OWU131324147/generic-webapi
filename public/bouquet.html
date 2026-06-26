@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>季節と花言葉で選ぶ花束提案AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bouquet.css">
+</head>
+<body class="bouquet-page">
+    <div class="app-shell">
+        <header class="bouquet-header">
+            <div>
+                <p class="eyebrow">Bouquet Concierge</p>
+                <h1>季節と花言葉で選ぶ花束提案AI</h1>
+            </div>
+            <div class="bouquet-visual" aria-hidden="true">
+                <span class="stem stem-a"></span>
+                <span class="stem stem-b"></span>
+                <span class="stem stem-c"></span>
+                <span class="bloom bloom-a"></span>
+                <span class="bloom bloom-b"></span>
+                <span class="bloom bloom-c"></span>
+                <span class="wrap"></span>
+            </div>
+        </header>
+
+        <main class="planner-grid">
+            <section class="planner-panel">
+                <form id="bouquetForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="occasion">用途</label>
+                            <select id="occasion">
+                                <option value="誕生日">誕生日</option>
+                                <option value="記念日">記念日</option>
+                                <option value="送別">送別</option>
+                                <option value="お祝い">お祝い</option>
+                                <option value="お見舞い">お見舞い</option>
+                                <option value="プロポーズ">プロポーズ</option>
+                                <option value="感謝を伝える贈り物" selected>感謝を伝える贈り物</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="recipient">贈る相手</label>
+                            <input type="text" id="recipient" value="お世話になった先輩" placeholder="例: 母、友人、同僚、恋人">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="season">季節</label>
+                            <select id="season">
+                                <option value="季節をおまかせ" selected>季節をおまかせ</option>
+                                <option value="春">春</option>
+                                <option value="夏">夏</option>
+                                <option value="秋">秋</option>
+                                <option value="冬">冬</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="budget">予算</label>
+                            <select id="budget">
+                                <option value="3,000円前後">3,000円前後</option>
+                                <option value="5,000円前後" selected>5,000円前後</option>
+                                <option value="8,000円前後">8,000円前後</option>
+                                <option value="10,000円以上">10,000円以上</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mood">雰囲気</label>
+                            <select id="mood">
+                                <option value="やさしく上品">やさしく上品</option>
+                                <option value="明るく元気">明るく元気</option>
+                                <option value="大人っぽく落ち着いた">大人っぽく落ち着いた</option>
+                                <option value="華やかで印象的">華やかで印象的</option>
+                                <option value="ナチュラルで季節感がある" selected>ナチュラルで季節感がある</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="colors">好きな色・避けたい色</label>
+                            <input type="text" id="colors" value="白、淡いピンク、グリーン。赤は控えめ" placeholder="例: 黄色が好き、紫は避けたい">
+                        </div>
+
+                        <div class="form-group span-2">
+                            <label for="flowerPreferences">入れたい花・避けたい花</label>
+                            <input type="text" id="flowerPreferences" placeholder="例: バラを入れたい、香りが強い花は避けたい">
+                        </div>
+
+                        <div class="form-group span-2">
+                            <label for="message">伝えたい気持ち</label>
+                            <textarea id="message" placeholder="例: 忙しい時期に支えてくれた感謝を、重すぎず明るく伝えたい">今までの感謝を、明るく自然に伝えたい</textarea>
+                        </div>
+                    </div>
+
+                    <button class="btn generate-btn" type="submit">おすすめ花束を提案</button>
+                </form>
+            </section>
+        </main>
+
+        <div class="status" id="status">希望条件を入力してください</div>
+        <div class="loading" id="loading">花束の候補を考えています...</div>
+
+        <section class="results" id="results" aria-live="polite"></section>
+    </div>
+
+    <script>
+        const form = document.getElementById('bouquetForm');
+        const resultsEl = document.getElementById('results');
+        const loadingEl = document.getElementById('loading');
+        const statusEl = document.getElementById('status');
+
+        form.addEventListener('submit', generateBouquets);
+
+        async function generateBouquets(event) {
+            event.preventDefault();
+
+            const payload = {
+                promptKey: 'bouquet',
+                title: '花束提案',
+                count: 3,
+                occasion: valueOf('occasion'),
+                recipient: valueOf('recipient'),
+                season: normalizeSeason(valueOf('season')),
+                budget: valueOf('budget'),
+                colors: valueOf('colors') || 'おまかせ',
+                mood: valueOf('mood'),
+                flowerPreferences: valueOf('flowerPreferences') || '指定なし',
+                message: valueOf('message') || '気持ちが伝わる花束にしたい'
+            };
+
+            if (!payload.recipient.trim()) {
+                alert('贈る相手を入力してください。');
+                return;
+            }
+
+            setLoading(true);
+            resultsEl.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'API error');
+                }
+
+                const recommendations = normalizeRecommendations(data.data);
+                if (recommendations.length === 0) {
+                    throw new Error('提案データが空です');
+                }
+
+                renderRecommendations(recommendations);
+                statusEl.textContent = `${recommendations.length}件の花束案を提案しました`;
+            } catch (error) {
+                console.error(error);
+                alert('花束提案の作成に失敗しました: ' + error.message);
+                statusEl.textContent = '提案の作成に失敗しました';
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function valueOf(id) {
+            return document.getElementById(id).value.trim();
+        }
+
+        function normalizeSeason(season) {
+            if (season !== '季節をおまかせ') return season;
+
+            const month = new Date().getMonth() + 1;
+            if (month >= 3 && month <= 5) return '春';
+            if (month >= 6 && month <= 8) return '夏';
+            if (month >= 9 && month <= 11) return '秋';
+            return '冬';
+        }
+
+        function setLoading(isLoading) {
+            loadingEl.classList.toggle('show', isLoading);
+            document.querySelector('.generate-btn').disabled = isLoading;
+        }
+
+        function normalizeRecommendations(items) {
+            if (!Array.isArray(items)) return [];
+
+            return items.map(item => ({
+                bouquetName: item.bouquetName || 'おすすめ花束',
+                concept: item.concept || '',
+                seasonFit: item.seasonFit || '',
+                colorPalette: Array.isArray(item.colorPalette) ? item.colorPalette : [],
+                flowers: Array.isArray(item.flowers) ? item.flowers : [],
+                wrapping: item.wrapping || '',
+                budgetNote: item.budgetNote || '',
+                careTips: Array.isArray(item.careTips) ? item.careTips : [],
+                messageCard: item.messageCard || '',
+                orderPhrase: item.orderPhrase || ''
+            })).filter(item => item.concept && item.flowers.length > 0);
+        }
+
+        function renderRecommendations(recommendations) {
+            resultsEl.innerHTML = recommendations.map((item, index) => `
+                <article class="bouquet-card">
+                    <div class="card-topline">
+                        <span>提案 ${index + 1}</span>
+                        <div class="palette">${renderPalette(item.colorPalette)}</div>
+                    </div>
+                    <h2>${escapeHtml(item.bouquetName)}</h2>
+                    <p class="concept">${escapeHtml(item.concept)}</p>
+
+                    <div class="detail-grid">
+                        <section>
+                            <h3>季節との相性</h3>
+                            <p>${escapeHtml(item.seasonFit)}</p>
+                        </section>
+                        <section>
+                            <h3>ラッピング</h3>
+                            <p>${escapeHtml(item.wrapping)}</p>
+                        </section>
+                    </div>
+
+                    <section>
+                        <h3>おすすめの花材</h3>
+                        <div class="flower-list">
+                            ${item.flowers.map(renderFlower).join('')}
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3>予算と扱い方</h3>
+                        <p>${escapeHtml(item.budgetNote)}</p>
+                        <ul class="care-list">
+                            ${item.careTips.map(tip => `<li>${escapeHtml(tip)}</li>`).join('')}
+                        </ul>
+                    </section>
+
+                    <section class="message-box">
+                        <h3>メッセージカード</h3>
+                        <p>${escapeHtml(item.messageCard)}</p>
+                    </section>
+
+                    <section class="order-box">
+                        <h3>花屋さんへの注文文</h3>
+                        <p>${escapeHtml(item.orderPhrase)}</p>
+                    </section>
+                </article>
+            `).join('');
+        }
+
+        function renderFlower(flower) {
+            return `
+                <div class="flower-item">
+                    <strong>${escapeHtml(flower.name || '花材')}</strong>
+                    <span>${escapeHtml(flower.role || '花材')}</span>
+                    <p>${escapeHtml(flower.flowerLanguage || '')}</p>
+                    <small>${escapeHtml(flower.seasonNote || '')}</small>
+                </div>
+            `;
+        }
+
+        function renderPalette(colors) {
+            if (colors.length === 0) return '';
+
+            return colors.map(color => `
+                <span class="swatch" style="background:${colorToCss(color)}" title="${escapeHtml(color)}"></span>
+            `).join('');
+        }
+
+        function colorToCss(color) {
+            const text = String(color).toLowerCase();
+            if (text.includes('ピンク') || text.includes('pink')) return '#e9a1ad';
+            if (text.includes('赤') || text.includes('red')) return '#c95f5f';
+            if (text.includes('白') || text.includes('ホワイト') || text.includes('cream') || text.includes('クリーム')) return '#f7f0df';
+            if (text.includes('黄') || text.includes('yellow')) return '#e6c85f';
+            if (text.includes('オレンジ') || text.includes('orange')) return '#d88a50';
+            if (text.includes('紫') || text.includes('パープル') || text.includes('purple')) return '#9b7bb7';
+            if (text.includes('青') || text.includes('ブルー') || text.includes('blue')) return '#7899bd';
+            if (text.includes('緑') || text.includes('グリーン') || text.includes('green')) return '#7fa176';
+            return '#c7b7a3';
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

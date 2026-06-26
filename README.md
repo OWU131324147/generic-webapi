@@ -1,14 +1,14 @@
 # Generic Web API for LLM Integration
 
-A flexible Node.js web API that allows you to create LLM-powered applications by simply editing a Markdown prompt file. No code changes required for different use cases.
+A flexible Node.js web API that allows you to create LLM-powered applications by editing a Markdown prompt file and a small static web UI.
 
 ## Features
 
 - 🎯 **Generic Design**: One API endpoint for any LLM application
-- 📝 **Markdown Prompts**: Define your application logic in `prompt.md`
+- 📝 **Markdown Prompts**: Define your application logic in `prompt.md` or `prompts/*.md`
 - 🔄 **Variable Substitution**: Automatic replacement of `${variable}` placeholders
 - 🤖 **Multi-Provider**: Supports OpenAI and Google Gemini
-- ⚡ **No Code Changes**: Switch between applications by editing `prompt.md`
+- ⚡ **Prompt Switching**: Switch applications with `promptKey` in the request body
 
 ## Quick Start
 
@@ -41,17 +41,16 @@ PORT=8080
 
 ### 3. Configure LLM Provider
 
-Edit the `PROVIDER` constant near the top of `server.js`:
+Set the provider and model in `.env.local`:
 
-```javascript
-// For OpenAI (default) -> gpt-5.5
-const PROVIDER = 'openai';
+```env
+LLM_PROVIDER=openai
+OPENAI_MODEL=gpt-5.5
 
-// For Gemini -> gemini-3.5-flash
-// const PROVIDER = 'gemini';
+# or
+LLM_PROVIDER=gemini
+GEMINI_MODEL=gemini-3.5-flash
 ```
-
-The model is selected automatically from the `MODELS` map based on `PROVIDER`.
 
 ### 4. Start Server
 
@@ -66,14 +65,14 @@ Visit `http://localhost:8080`
 ### Architecture
 
 ```
-Client (quiz.html) → POST /api/ → server.js → LLM → Response
-                                     ↓
-                              prompt.md (template)
+Client (quiz.html / bouquet.html) → POST /api/ → server.js → LLM → Response
+                                                   ↓
+                                           promptKey template
 ```
 
 ### Variable Substitution
 
-The API automatically replaces variables in `prompt.md` with request data:
+The API automatically replaces variables in the selected prompt template with request data:
 
 **prompt.md:**
 ```markdown
@@ -84,6 +83,7 @@ Format: JSON array
 **Request:**
 ```json
 {
+  "promptKey": "default",
   "count": 5,
   "topic": "JavaScript"
 }
@@ -98,6 +98,7 @@ Format: JSON array
 **Request Body:**
 ```json
 {
+  "promptKey": "bouquet",
   "title": "My Quiz",
   "count": 5,
   "any_variable": "value"
@@ -114,15 +115,41 @@ Format: JSON array
 
 ## Example Applications
 
-### 1. IT Certification Quiz (Included)
+### 1. IT Passport AI Study Coach (Included)
 
 **Files:**
-- `prompt.md` - Defines IT quiz generation logic
-- `public/quiz.html` - Quiz interface
+- `prompts/it-passport.md` - Defines quiz, explanation, and review-point generation
+- `public/quiz.html` - Study coach interface
+- `public/quiz.css` - Study coach styles
 
-**Usage:** Generate IT certification practice questions
+**Usage:** Generate IT Passport practice questions from the selected domain, difficulty, weak areas, and learning goal. Each generated question includes:
 
-### 2. Translation App (Example)
+- category and topic tags
+- four answer choices
+- correct answer index
+- explanation
+- review point
+- wrong-answer review flow
+
+### 2. Bouquet Concierge (Included)
+
+**Files:**
+- `prompts/bouquet.md` - Defines bouquet recommendation logic
+- `public/bouquet.html` - Bouquet planner interface
+- `public/bouquet.css` - Bouquet planner styles
+
+**Usage:** Suggest bouquets from occasion, recipient, season, budget, colors, mood, flower preferences, and message. Each recommendation includes:
+
+- bouquet concept
+- seasonal fit
+- color palette
+- recommended flowers with flower-language notes
+- wrapping and budget guidance
+- care tips
+- message-card text
+- order phrase for a florist
+
+### 3. Translation App (Example)
 
 **prompt.md:**
 ```markdown
@@ -143,7 +170,7 @@ Return only the translated text.
 }
 ```
 
-### 3. Code Review App (Example)
+### 4. Code Review App (Example)
 
 **prompt.md:**
 ```markdown
@@ -175,22 +202,28 @@ Provide:
 generic-webapi/
 ├── server.js          # Generic API server (no changes needed)
 ├── prompt.md          # Application-specific prompt template
+├── prompts/           # Prompt templates selectable with promptKey
+│   ├── bouquet.md
+│   └── it-passport.md
 ├── package.json       # Dependencies
 ├── .env.example       # Environment variables template
 ├── public/            # Static files
-│   ├── quiz.html     # IT quiz application
-│   ├── style.css     # Styles
-│   └── quiz.css      # Quiz-specific styles
+│   ├── bouquet.html  # Bouquet concierge
+│   ├── bouquet.css   # Bouquet concierge styles
+│   ├── quiz.html     # IT Passport AI study coach
+│   ├── quiz.css      # Study coach-specific styles
+│   └── style.css     # Shared styles
 └── README.md         # This file
 ```
 
 ## Creating New Applications
 
-1. **Edit `prompt.md`** - Define your application logic and variables
-2. **Create client HTML** - Build your user interface in `public/`
-3. **Send requests** - Use any variables you defined in `prompt.md`
+1. **Add a prompt file** - Define your application logic and variables in `prompts/`
+2. **Register the prompt** - Add the file to `PROMPT_FILES` in `server.js`
+3. **Create client HTML** - Build your user interface in `public/`
+4. **Send requests** - Include `promptKey` and any variables defined in the prompt
 
-No server code changes required!
+After registering the prompt once, the client can send any variables defined in that prompt.
 
 ## Environment Variables
 
@@ -204,26 +237,20 @@ No server code changes required!
 
 ### Switch to OpenAI (default)
 
-1. Edit `server.js`:
-```javascript
-const PROVIDER = 'openai';
-```
-
-2. Set OpenAI API key in `.env.local`:
+Set OpenAI configuration in `.env.local`:
 ```env
+LLM_PROVIDER=openai
 OPENAI_API_KEY=your_key_here
+OPENAI_MODEL=gpt-5.5
 ```
 
 ### Switch to Gemini
 
-1. Edit `server.js`:
-```javascript
-const PROVIDER = 'gemini';
-```
-
-2. Set Gemini API key in `.env.local`:
+Set Gemini configuration in `.env.local`:
 ```env
+LLM_PROVIDER=gemini
 GEMINI_API_KEY=your_key_here
+GEMINI_MODEL=gemini-3.5-flash
 ```
 
 ## Development

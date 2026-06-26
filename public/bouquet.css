@@ -1,0 +1,365 @@
+.bouquet-page {
+    background:
+        linear-gradient(180deg, rgba(255, 252, 246, 0.9), rgba(245, 247, 242, 0.96)),
+        #e7eee3;
+}
+
+.app-shell {
+    margin: 0 auto;
+    max-width: 1120px;
+    padding: 22px;
+}
+
+.bouquet-header {
+    align-items: center;
+    background: #fffdf8;
+    border: 1px solid #e5ded2;
+    border-radius: 8px;
+    box-shadow: 0 16px 34px rgba(74, 58, 44, 0.12);
+    display: flex;
+    justify-content: space-between;
+    min-height: 172px;
+    overflow: hidden;
+    padding: 24px 30px;
+    position: relative;
+}
+
+.bouquet-header h1 {
+    color: #2c3440;
+    font-size: 32px;
+    letter-spacing: 0;
+    line-height: 1.25;
+    max-width: 640px;
+}
+
+.bouquet-header .eyebrow {
+    color: #9b5f6f;
+}
+
+.bouquet-visual {
+    height: 150px;
+    position: relative;
+    width: 220px;
+}
+
+.stem {
+    background: #667d58;
+    border-radius: 999px;
+    bottom: 20px;
+    display: block;
+    height: 112px;
+    position: absolute;
+    width: 7px;
+}
+
+.stem-a {
+    left: 102px;
+    transform: rotate(-17deg);
+}
+
+.stem-b {
+    left: 118px;
+    transform: rotate(5deg);
+}
+
+.stem-c {
+    left: 134px;
+    transform: rotate(20deg);
+}
+
+.bloom {
+    border: 6px solid rgba(255, 255, 255, 0.58);
+    border-radius: 52% 48% 55% 45%;
+    box-shadow: 0 10px 18px rgba(79, 48, 57, 0.14);
+    display: block;
+    height: 56px;
+    position: absolute;
+    width: 64px;
+}
+
+.bloom-a {
+    background: #d97889;
+    left: 56px;
+    top: 12px;
+    transform: rotate(-14deg);
+}
+
+.bloom-b {
+    background: #f1d4a8;
+    left: 105px;
+    top: 0;
+}
+
+.bloom-c {
+    background: #a9bfd2;
+    left: 146px;
+    top: 24px;
+    transform: rotate(12deg);
+}
+
+.wrap {
+    background: linear-gradient(135deg, #efe2cf 0%, #d7bea0 100%);
+    border: 1px solid #c8aa88;
+    border-radius: 6px 6px 18px 18px;
+    bottom: 0;
+    display: block;
+    height: 58px;
+    left: 72px;
+    position: absolute;
+    transform: rotate(-2deg);
+    width: 116px;
+}
+
+.planner-grid {
+    margin-top: 20px;
+}
+
+.planner-panel,
+.bouquet-card {
+    background: rgba(255, 253, 248, 0.96);
+    border: 1px solid #e5ded2;
+    border-radius: 8px;
+    box-shadow: 0 16px 34px rgba(74, 58, 44, 0.1);
+}
+
+.planner-panel {
+    padding: 24px;
+}
+
+.form-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.span-2 {
+    grid-column: 1 / -1;
+}
+
+.bouquet-page .form-group label {
+    color: #46515f;
+}
+
+.bouquet-page .form-group input,
+.bouquet-page .form-group select,
+.bouquet-page .form-group textarea {
+    background: #fffefa;
+    border-color: #ded5c8;
+}
+
+.bouquet-page .form-group input:focus,
+.bouquet-page .form-group select:focus,
+.bouquet-page .form-group textarea:focus {
+    border-color: #b36a7c;
+}
+
+.generate-btn {
+    background: #9b5f6f;
+    margin-top: 18px;
+    width: 100%;
+}
+
+.generate-btn:hover {
+    background: #814b5b;
+    box-shadow: 0 4px 12px rgba(155, 95, 111, 0.25);
+}
+
+.generate-btn:disabled {
+    cursor: wait;
+    opacity: 0.65;
+    transform: none;
+}
+
+.bouquet-page .status,
+.bouquet-page .loading {
+    background: #fffdf8;
+    border: 1px solid #e5ded2;
+    color: #57614f;
+}
+
+.results {
+    display: grid;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.bouquet-card {
+    padding: 24px;
+}
+
+.card-topline {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.card-topline > span {
+    color: #9b5f6f;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.palette {
+    display: flex;
+    gap: 6px;
+}
+
+.swatch {
+    border: 1px solid rgba(37, 44, 54, 0.16);
+    border-radius: 999px;
+    display: block;
+    height: 18px;
+    width: 18px;
+}
+
+.bouquet-card h2 {
+    color: #2c3440;
+    font-size: 24px;
+    line-height: 1.32;
+    margin-bottom: 8px;
+}
+
+.concept {
+    color: #46515f;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.detail-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 18px;
+}
+
+.bouquet-card section {
+    margin-top: 18px;
+}
+
+.detail-grid section {
+    background: #fbf7ef;
+    border: 1px solid #eadfce;
+    border-radius: 8px;
+    margin: 0;
+    padding: 14px;
+}
+
+.bouquet-card h3 {
+    color: #5d4a3b;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.bouquet-card p,
+.bouquet-card li,
+.flower-item small {
+    color: #53606f;
+}
+
+.flower-list {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.flower-item {
+    background: #f8faf7;
+    border: 1px solid #dfe6da;
+    border-radius: 8px;
+    padding: 13px;
+}
+
+.flower-item strong,
+.flower-item span,
+.flower-item small {
+    display: block;
+}
+
+.flower-item strong {
+    color: #2f4534;
+    margin-bottom: 4px;
+}
+
+.flower-item span {
+    color: #9b5f6f;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.flower-item p {
+    color: #46515f;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.care-list {
+    margin: 10px 0 0 18px;
+}
+
+.message-box,
+.order-box {
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.message-box {
+    background: #f7edf0;
+    border: 1px solid #e6cbd3;
+}
+
+.order-box {
+    background: #eef5ec;
+    border: 1px solid #d5e3d0;
+}
+
+.order-box p {
+    color: #2f4534;
+    font-weight: 800;
+}
+
+@media (max-width: 920px) {
+    .flower-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 680px) {
+    .app-shell {
+        padding: 12px;
+    }
+
+    .bouquet-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .bouquet-header h1 {
+        font-size: 24px;
+    }
+
+    .bouquet-visual {
+        align-self: center;
+        margin-top: 14px;
+        transform: scale(0.9);
+    }
+
+    .form-grid,
+    .detail-grid,
+    .flower-list {
+        grid-template-columns: 1fr;
+    }
+
+    .span-2 {
+        grid-column: auto;
+    }
+
+    .card-topline {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
