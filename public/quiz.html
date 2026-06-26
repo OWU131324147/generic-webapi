@@ -3,93 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Quiz Generator</title>
+    <title>ITパスポート AI学習コーチ</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="quiz.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>ITパスポート対策クイズ</h1>
+            <div>
+                <p class="eyebrow">AI Study Coach</p>
+                <h1>ITパスポート AI学習コーチ</h1>
+            </div>
         </div>
 
-        <div class="quiz-container">
-            <!-- クイズ設定画面 -->
-            <div class="quiz-setup" id="quizSetup">
-                <div class="form-group">
-                    <label for="quizTitle">クイズのタイトル:</label>
-                    <input type="text" id="quizTitle" placeholder="例: ITパスポート対策クイズ" value="ITパスポート対策クイズ">
-                </div>
-                
-                <div class="form-row">
+        <main class="quiz-container">
+            <section class="quiz-setup" id="quizSetup">
+                <div class="setup-grid">
+                    <div class="form-group span-2">
+                        <label for="quizTitle">学習セッション名</label>
+                        <input type="text" id="quizTitle" value="ITパスポート弱点補強トレーニング">
+                    </div>
+
                     <div class="form-group">
-                        <label for="questionCount">問題数:</label>
+                        <label for="questionCount">問題数</label>
                         <input type="number" id="questionCount" min="1" max="20" value="5">
                     </div>
-                    
+
                     <div class="form-group">
-                        <button class="btn" onclick="generateQuiz()">クイズを生成</button>
+                        <label for="difficulty">難易度</label>
+                        <select id="difficulty">
+                            <option value="基礎">基礎</option>
+                            <option value="標準" selected>標準</option>
+                            <option value="応用">応用</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="domain">出題分野</label>
+                        <select id="domain">
+                            <option value="全分野">全分野</option>
+                            <option value="ストラテジ系">ストラテジ系</option>
+                            <option value="マネジメント系">マネジメント系</option>
+                            <option value="テクノロジ系">テクノロジ系</option>
+                            <option value="情報セキュリティ">情報セキュリティ</option>
+                            <option value="ネットワーク">ネットワーク</option>
+                            <option value="データベース">データベース</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goal">学習目的</label>
+                        <select id="goal">
+                            <option value="試験直前の確認">試験直前の確認</option>
+                            <option value="苦手分野の克服" selected>苦手分野の克服</option>
+                            <option value="用語理解の強化">用語理解の強化</option>
+                            <option value="ひっかけ問題への対策">ひっかけ問題への対策</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group span-2">
+                        <label for="weakAreas">苦手テーマ・重点テーマ</label>
+                        <textarea id="weakAreas" placeholder="例: サブネットマスク、損益分岐点、プロジェクト管理、暗号化方式"></textarea>
                     </div>
                 </div>
-            </div>
 
-            <!-- クイズ実行画面 -->
-            <div class="quiz-playing" id="quizPlaying">
-                <div class="quiz-progress" id="quizProgress"></div>
+                <button class="btn primary-action" type="button" onclick="generateQuiz()">AIで学習メニューを作成</button>
+            </section>
+
+            <section class="quiz-playing" id="quizPlaying">
+                <div class="quiz-meta">
+                    <div class="quiz-progress" id="quizProgress"></div>
+                    <div class="score-chip" id="scoreChip">0問正解</div>
+                </div>
+
                 <h2 id="quizTitleDisplay"></h2>
-                
+                <div class="question-tags" id="questionTags"></div>
                 <div class="question" id="currentQuestion"></div>
-                
-                <ul class="selections" id="selections"></ul>
-                
-                <div class="answer-feedback" id="answerFeedback"></div>
-                
-                <button class="btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">次の問題</button>
-                <button class="btn" id="finishBtn" onclick="showResults()" style="display: none;">結果を見る</button>
-            </div>
 
-            <!-- 結果画面 -->
-            <div class="quiz-results" id="quizResults">
-                <h2>クイズ結果</h2>
+                <ul class="selections" id="selections"></ul>
+
+                <div class="answer-feedback" id="answerFeedback">
+                    <strong id="feedbackResult"></strong>
+                    <p id="feedbackExplanation"></p>
+                    <p class="review-point" id="feedbackReview"></p>
+                </div>
+
+                <div class="actions">
+                    <button class="btn secondary" type="button" onclick="restartQuiz()">条件を変更</button>
+                    <button class="btn" id="nextBtn" type="button" onclick="nextQuestion()">次の問題</button>
+                    <button class="btn" id="finishBtn" type="button" onclick="showResults()">結果を見る</button>
+                </div>
+            </section>
+
+            <section class="quiz-results" id="quizResults">
+                <h2>学習結果</h2>
                 <div class="score" id="finalScore"></div>
-                <button class="btn" onclick="restartQuiz()">新しいクイズを作成</button>
-            </div>
-        </div>
+                <div class="result-summary" id="resultSummary"></div>
+                <div class="review-list" id="reviewList"></div>
+                <div class="actions">
+                    <button class="btn secondary" type="button" onclick="reviewMistakes()">間違えた問題を復習</button>
+                    <button class="btn" type="button" onclick="restartQuiz()">新しい学習メニューを作成</button>
+                </div>
+            </section>
+        </main>
 
         <div class="status" id="status">Ready</div>
-        <div class="loading" id="loading">クイズを生成中...</div>
+        <div class="loading" id="loading">AIが学習メニューを作成中...</div>
     </div>
 
     <script>
         let quizData = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        let selectedAnswer = null;
-        let hasAnswered = false;
+        let answers = [];
+        let reviewOnly = false;
 
-        // 初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            updateStatus();
-        });
+        document.addEventListener('DOMContentLoaded', updateStatus);
 
-        // ステータス更新
         function updateStatus() {
             const statusEl = document.getElementById('status');
-            statusEl.textContent = 'Ready to generate ITパスポート quiz';
-            statusEl.style.color = '#28a745';
+            statusEl.textContent = '学習条件を指定してAI学習メニューを作成できます';
+            statusEl.style.color = '#237a57';
         }
 
-        // クイズ生成
         async function generateQuiz() {
             const title = document.getElementById('quizTitle').value.trim();
-            const count = parseInt(document.getElementById('questionCount').value);
+            const count = Number.parseInt(document.getElementById('questionCount').value, 10);
+            const domain = document.getElementById('domain').value;
+            const difficulty = document.getElementById('difficulty').value;
+            const goal = document.getElementById('goal').value;
+            const weakAreas = document.getElementById('weakAreas').value.trim() || '指定なし';
 
-            if (!title || count < 1) {
-                alert('すべての項目を正しく入力してください');
+            if (!title || !Number.isInteger(count) || count < 1 || count > 20) {
+                alert('セッション名と問題数を正しく入力してください。問題数は1から20までです。');
                 return;
             }
 
-            document.getElementById('loading').classList.add('show');
+            setLoading(true);
 
             try {
                 const response = await fetch('/api/', {
@@ -97,38 +147,58 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        title: title,
-                        count: count
-                    })
+                    body: JSON.stringify({ promptKey: 'itPassport', title, count, domain, difficulty, goal, weakAreas })
                 });
 
+                const data = await response.json();
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'API error');
+                    throw new Error(data.error || 'API error');
                 }
 
-                const data = await response.json();
-                quizData = data.data;
-
-                if (!Array.isArray(quizData) || quizData.length === 0) {
-                    throw new Error('Invalid quiz data format');
+                quizData = normalizeQuizData(data.data);
+                if (quizData.length === 0) {
+                    throw new Error('クイズデータが空です');
                 }
 
                 currentQuestionIndex = 0;
                 score = 0;
+                answers = [];
+                reviewOnly = false;
                 document.getElementById('quizTitleDisplay').textContent = data.title;
                 startQuiz();
-                
             } catch (error) {
                 console.error('Error:', error);
-                alert('クイズの生成に失敗しました: ' + error.message);
+                alert('学習メニューの作成に失敗しました: ' + error.message);
             } finally {
-                document.getElementById('loading').classList.remove('show');
+                setLoading(false);
             }
         }
 
-        // クイズ開始
+        function normalizeQuizData(items) {
+            if (!Array.isArray(items)) return [];
+
+            return items
+                .filter(item => item && Array.isArray(item.selections))
+                .map(item => ({
+                    category: item.category || 'ITパスポート',
+                    topic: item.topic || '総合問題',
+                    difficulty: item.difficulty || document.getElementById('difficulty').value,
+                    question: item.question || '',
+                    selections: item.selections.slice(0, 4),
+                    answer: Number(item.answer),
+                    explanation: item.explanation || '解説は生成されませんでした。',
+                    reviewPoint: item.reviewPoint || '関連用語を確認しておきましょう。',
+                    selected: null,
+                    isCorrect: false
+                }))
+                .filter(item => item.question && item.selections.length === 4 && Number.isInteger(item.answer) && item.answer >= 0 && item.answer < 4);
+        }
+
+        function setLoading(isLoading) {
+            document.getElementById('loading').classList.toggle('show', isLoading);
+            document.querySelector('.primary-action').disabled = isLoading;
+        }
+
         function startQuiz() {
             document.getElementById('quizSetup').style.display = 'none';
             document.getElementById('quizPlaying').style.display = 'block';
@@ -136,7 +206,6 @@
             showQuestion();
         }
 
-        // 問題表示
         function showQuestion() {
             if (currentQuestionIndex >= quizData.length) {
                 showResults();
@@ -144,95 +213,149 @@
             }
 
             const question = quizData[currentQuestionIndex];
-            hasAnswered = false;
-            selectedAnswer = null;
+            const answered = question.selected !== null;
 
-            document.getElementById('quizProgress').textContent = 
-                `問題 ${currentQuestionIndex + 1} / ${quizData.length}`;
-            
+            document.getElementById('quizProgress').textContent = `問題 ${currentQuestionIndex + 1} / ${quizData.length}`;
+            document.getElementById('scoreChip').textContent = `${score}問正解`;
             document.getElementById('currentQuestion').textContent = question.question;
-            
+            document.getElementById('questionTags').innerHTML = `
+                <span>${escapeHtml(question.category)}</span>
+                <span>${escapeHtml(question.topic)}</span>
+                <span>${escapeHtml(question.difficulty)}</span>
+            `;
+
             const selectionsEl = document.getElementById('selections');
             selectionsEl.innerHTML = '';
-            
+
             question.selections.forEach((selection, index) => {
                 const li = document.createElement('li');
                 li.className = 'selection-item';
                 li.textContent = selection;
-                li.onclick = () => selectAnswer(index);
+                li.onclick = answered ? null : () => selectAnswer(index);
+
+                if (answered && index === question.answer) {
+                    li.classList.add('correct');
+                } else if (answered && index === question.selected && !question.isCorrect) {
+                    li.classList.add('incorrect');
+                }
+
                 selectionsEl.appendChild(li);
             });
 
-            document.getElementById('answerFeedback').style.display = 'none';
-            document.getElementById('nextBtn').style.display = 'none';
-            document.getElementById('finishBtn').style.display = 'none';
+            showFeedback(answered);
+            document.getElementById('nextBtn').style.display = answered && currentQuestionIndex < quizData.length - 1 ? 'inline-block' : 'none';
+            document.getElementById('finishBtn').style.display = answered && currentQuestionIndex === quizData.length - 1 ? 'inline-block' : 'none';
         }
 
-        // 答え選択
         function selectAnswer(index) {
-            if (hasAnswered) return;
+            const question = quizData[currentQuestionIndex];
+            if (question.selected !== null) return;
 
-            selectedAnswer = index;
-            hasAnswered = true;
+            question.selected = index;
+            question.isCorrect = index === question.answer;
+            answers[currentQuestionIndex] = {
+                selected: index,
+                isCorrect: question.isCorrect
+            };
+
+            if (question.isCorrect) score++;
+            showQuestion();
+        }
+
+        function showFeedback(visible) {
+            const feedback = document.getElementById('answerFeedback');
+            if (!visible) {
+                feedback.style.display = 'none';
+                return;
+            }
 
             const question = quizData[currentQuestionIndex];
-            const correctAnswer = question.answer;
-            const isCorrect = selectedAnswer === correctAnswer;
-
-            if (isCorrect) {
-                score++;
-            }
-
-            const selectionItems = document.querySelectorAll('.selection-item');
-            selectionItems.forEach((item, i) => {
-                item.onclick = null;
-                if (i === correctAnswer) {
-                    item.classList.add('correct');
-                } else if (i === selectedAnswer && !isCorrect) {
-                    item.classList.add('incorrect');
-                }
-            });
-
-            const feedback = document.getElementById('answerFeedback');
             feedback.style.display = 'block';
-            if (isCorrect) {
-                feedback.className = 'answer-feedback correct';
-                feedback.textContent = '正解！';
-            } else {
-                feedback.className = 'answer-feedback incorrect';
-                feedback.textContent = `不正解。正解は「${question.selections[correctAnswer]}」です。`;
-            }
-
-            if (currentQuestionIndex < quizData.length - 1) {
-                document.getElementById('nextBtn').style.display = 'inline-block';
-            } else {
-                document.getElementById('finishBtn').style.display = 'inline-block';
-            }
+            feedback.className = `answer-feedback ${question.isCorrect ? 'correct' : 'incorrect'}`;
+            document.getElementById('feedbackResult').textContent = question.isCorrect
+                ? '正解'
+                : `不正解。正解は「${question.selections[question.answer]}」です。`;
+            document.getElementById('feedbackExplanation').textContent = question.explanation;
+            document.getElementById('feedbackReview').textContent = question.reviewPoint;
         }
 
-        // 次の問題
         function nextQuestion() {
             currentQuestionIndex++;
             showQuestion();
         }
 
-        // 結果表示
         function showResults() {
             document.getElementById('quizPlaying').style.display = 'none';
             document.getElementById('quizResults').style.display = 'block';
-            
+
             const percentage = Math.round((score / quizData.length) * 100);
-            document.getElementById('finalScore').textContent = 
-                `${score} / ${quizData.length} 問正解 (${percentage}%)`;
+            document.getElementById('finalScore').textContent = `${score} / ${quizData.length} 問正解 (${percentage}%)`;
+            document.getElementById('resultSummary').textContent = buildResultMessage(percentage);
+            renderReviewList();
         }
 
-        // クイズリスタート
-        function restartQuiz() {
-            document.getElementById('quizResults').style.display = 'none';
-            document.getElementById('quizSetup').style.display = 'block';
-            quizData = [];
+        function buildResultMessage(percentage) {
+            if (percentage >= 80) return '理解はかなり安定しています。間違えた論点だけ短時間で確認しましょう。';
+            if (percentage >= 60) return '合格ラインに近い理解です。解説と復習ポイントを使って弱点を埋めましょう。';
+            return '基礎の確認が必要です。まずは間違えた問題の用語と考え方を整理しましょう。';
+        }
+
+        function renderReviewList() {
+            const list = document.getElementById('reviewList');
+            const missed = quizData.filter(item => !item.isCorrect);
+
+            if (missed.length === 0) {
+                list.innerHTML = '<p class="empty-review">間違えた問題はありません。</p>';
+                return;
+            }
+
+            list.innerHTML = missed.map(item => `
+                <article class="review-item">
+                    <div class="review-heading">${escapeHtml(item.category)} / ${escapeHtml(item.topic)}</div>
+                    <p>${escapeHtml(item.question)}</p>
+                    <strong>${escapeHtml(item.selections[item.answer])}</strong>
+                    <span>${escapeHtml(item.reviewPoint)}</span>
+                </article>
+            `).join('');
+        }
+
+        function reviewMistakes() {
+            const missed = quizData.filter(item => !item.isCorrect);
+            if (missed.length === 0) return;
+
+            quizData = missed.map(item => ({
+                ...item,
+                selected: null,
+                isCorrect: false
+            }));
             currentQuestionIndex = 0;
             score = 0;
+            answers = [];
+            reviewOnly = true;
+            document.getElementById('quizTitleDisplay').textContent = '間違えた問題の復習';
+            startQuiz();
+        }
+
+        function restartQuiz() {
+            document.getElementById('quizPlaying').style.display = 'none';
+            document.getElementById('quizResults').style.display = 'none';
+            document.getElementById('quizSetup').style.display = 'block';
+            if (!reviewOnly) {
+                quizData = [];
+            }
+            currentQuestionIndex = 0;
+            score = 0;
+            answers = [];
+            reviewOnly = false;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
     </script>
 </body>

@@ -28,11 +28,16 @@
                 return;
             }
 
+            const pageLabels = {
+                'bouquet.html': '季節と花言葉で選ぶ花束提案AI',
+                'quiz.html': 'ITパスポート AI学習コーチ'
+            };
+
             files.forEach(name => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 a.href = name;
-                a.textContent = name;
+                a.textContent = pageLabels[name] || name;
                 li.appendChild(a);
                 list.appendChild(li);
             });
