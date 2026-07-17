@@ -25,6 +25,7 @@ const PROMPT_FILES = {
     default: 'prompt.md',
     itPassport: 'prompts/it-passport.md',
     bouquet: 'prompts/bouquet.md',
+    flowerAi: 'prompts/flower-ai.md',
 };
 const promptCache = new Map();
 
